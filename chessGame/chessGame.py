@@ -30,9 +30,49 @@ def is_valid_move(start, end, player):
     #verificar que la pieza sea del oponente
     if (player=="white" and piece.islower()) or (player=="black" and piece.isupper()):
         return False
-    
-    target_piece = board[ex][ey]
 
+    #verificar que la casilla de destino no sea una pieza del oponente
+    target_piece = board[ex][ey]
+    if (player=="white" and target_piece.isupper()) or (player=="black" and target_piece.islower()):
+        return False
+    
+    #verificar que la casilla de destino sea vacia
+    if target_piece != " ":
+        return False
+    
+    #definir el desplazamiento
+    dx,dy =abs(ex-sx),abs(ey-sy)
+
+    if piece.lower() == "p":
+        direction = 1 if piece.isupper() else -1 
+        if dy == 0 and board[ex][ey] == " ":
+            if dx == 1 or (dx == 2 and ((sx == 6 and piece.isupper()) or (sx == 1 and piece.islower()))):
+                return True
+        elif dx == 1 and dy == 1 and board[ex][ey] != " ":
+            return True
+    
+    elif piece.lower() == "r":
+        if dx == 0 or dy == 0:
+            return is_clear_path(start, end)
+    
+    elif piece.lower() == "n":
+        if (dx,dy) in [(1,2),(2,1)]:
+            return True
+    
+    elif piece.lower() == "b":
+        if dx == dy:
+            return is_clear_path(start, end)
+    
+    elif piece.lower() == "q":
+        if dx == dy or dx == 0 or dy == 0:
+            return is_clear_path(start, end)
+
+    elif piece.lower() == "k":
+        if max(dx,dy) == 1:
+            return True
+        
+    return False
+    
     
 
     # if piece == " ":
@@ -46,7 +86,24 @@ def is_valid_move(start, end, player):
     #     return False  # No se puede capturar la propia pieza
 
 
+    # return True
+
+def is_clear_path(start, end):
+    """Verifica si el camino entre dos puntos es vacio."""
+    sx, sy = start
+    ex, ey = end
+    
+    dx = 1 if ex > sx else -1 if ex < sx else 0
+    dy = 1 if ey > sy else -1 if ey < sy else 0
+
+    x, y = sx +dx, sy + dy
+    while (x, y) != (ex, ey):
+        if board[x][y] != " ":
+            return False
+        x += dx
+        y += dy
     return True
+   
 
 def move_piece(start, end):
     """Mueve una pieza de un lugar a otro."""
