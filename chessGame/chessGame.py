@@ -1,4 +1,4 @@
-# Inicializar el tablero de ajedrez vacío
+# Inicializar el tablero de ajedrez vacio
 board = [
     ["r", "n", "b", "q", "k", "b", "n", "r"],
     ["p", "p", "p", "p", "p", "p", "p", "p"],
@@ -10,7 +10,7 @@ board = [
     ["R", "N", "B", "Q", "K", "B", "N", "R"]
 ]
 
-# Mapeo de columnas de letras a índices
+# Mapeo de columnas de letras a indices
 column_map = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
 
 def print_board():
@@ -27,15 +27,23 @@ def is_valid_move(start, end, player):
     ex, ey = end
     piece = board[sx][sy]
 
-    if piece == " ":
-        return False  # No hay pieza para mover
-
-    if (player == "white" and piece.islower()) or (player == "black" and piece.isupper()):
-        return False  # No se puede mover la pieza del oponente
-
+    #verificar que la pieza sea del oponente
+    if (player=="white" and piece.islower()) or (player=="black" and piece.isupper()):
+        return False
+    
     target_piece = board[ex][ey]
-    if (player == "white" and target_piece.isupper()) or (player == "black" and target_piece.islower()):
-        return False  # No se puede capturar la propia pieza
+
+    
+
+    # if piece == " ":
+    #     return False  # No hay pieza para mover
+
+    # if (player == "white" and piece.islower()) or (player == "black" and piece.isupper()):
+    #     return False  # No se puede mover la pieza del oponente
+
+    # target_piece = board[ex][ey]
+    # if (player == "white" and target_piece.isupper()) or (player == "black" and target_piece.islower()):
+    #     return False  # No se puede capturar la propia pieza
 
 
     return True
