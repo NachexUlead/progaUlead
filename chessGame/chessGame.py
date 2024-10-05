@@ -22,7 +22,7 @@ def print_board():
     print()
 
 def is_valid_move(start, end, player):
-    """Verifica si un movimiento es valido (basico sin reglas complejas)."""
+    """Verifica si un movimiento es valido"""
     sx, sy = start
     ex, ey = end
     piece = board[sx][sy]
@@ -50,7 +50,7 @@ def is_valid_move(start, end, player):
                 return True
         elif dx == 1 and dy == 1 and board[ex][ey] != " ":
             return True
-    
+        
     elif piece.lower() == "r":
         if dx == 0 or dy == 0:
             return is_clear_path(start, end)
@@ -72,21 +72,6 @@ def is_valid_move(start, end, player):
             return True
         
     return False
-    
-    
-
-    # if piece == " ":
-    #     return False  # No hay pieza para mover
-
-    # if (player == "white" and piece.islower()) or (player == "black" and piece.isupper()):
-    #     return False  # No se puede mover la pieza del oponente
-
-    # target_piece = board[ex][ey]
-    # if (player == "white" and target_piece.isupper()) or (player == "black" and target_piece.islower()):
-    #     return False  # No se puede capturar la propia pieza
-
-
-    # return True
 
 def is_clear_path(start, end):
     """Verifica si el camino entre dos puntos es vacio."""
@@ -103,44 +88,103 @@ def is_clear_path(start, end):
         x += dx
         y += dy
     return True
-   
 
-def move_piece(start, end):
+def is_valid_castling(player, move):
+    """Verifica si el enroque es posible."""
+    if player == "white":
+        row = 7
+        if move == "o-o":  
+            if board[row][4] == "K" and board[row][7] == "R":
+                if board[row][5] == " " and board[row][6] == " ":
+                    return True
+        elif move == "o-o-o": 
+            if board[row][4] == "K" and board[row][0] == "R":
+                if board[row][1] == " " and board[row][2] == " " and board[row][3] == " ":
+                    return True
+    else:
+        row = 0
+        if move == "o-o":  
+            if board[row][4] == "k" and board[row][7] == "r":
+                if board[row][5] == " " and board[row][6] == " ":
+                    return True
+        elif move == "o-o-o": 
+            if board[row][4] == "k" and board[row][0] == "r":
+                if board[row][1] == " " and board[row][2] == " " and board[row][3] == " ":
+                    return True
+    return False
+
+
+
+
+def move_piece(start, end, move=None):
     """Mueve una pieza de un lugar a otro."""
-    sx, sy = start
-    ex, ey = end
-    board[ex][ey] = board[sx][sy]
-    board[sx][sy] = " "
+
+    if move == "o-o":
+        if board[7][4] == "K":
+            board[7][6] = "K"
+            board[7][5] = "R"
+            board[7][4] = " "
+            board[7][7] = " "
+        else:
+            board[0][6] = "k"
+            board[0][5] = "r"
+            board[0][4] = " "
+            board[0][7] = " "
+    elif move == "o-o-o":
+        if board[7][4] == "K":
+            board[7][2] = "K"
+            board[7][3] = "R"
+            board[7][4] = " "
+            board[7][0] = " "
+        else:
+            board[0][2] = "k"
+            board[0][3] = "r"
+            board[0][4] = " "
+            board[0][0] = " "
+    else:
+        sx, sy = start
+        ex, ey = end
+        board[ex][ey] = board[sx][sy]
+        board[sx][sy] = " "
 
 def parse_input(move):
     """Convierte la entrada de texto en coordenadas del tablero."""
+    if move in ["o-o", "o-o-o"]:
+        return None, None, move
     try:
         start, end = move.split()
         sx, sy = 8 - int(start[1]), column_map[start[0]]
         ex, ey = 8 - int(end[1]), column_map[end[0]]
-        return (sx, sy), (ex, ey)
+        return (sx, sy), (ex, ey), None
     except (ValueError, IndexError, KeyError):
-        return None, None
+        return None, None, None
 
 def main():
     """Funcion principal para ejecutar el juego."""
     player = "white"
     while True:
         print_board()
-        print(f"Turno de {player}. Ejemplo de movimiento: e2 e4")
+        print(f"Turno de {player}. Ejemplo de movimiento: e2 e4, o-o para enrocar en corto, o-o-o para enrocar en largo.")
         move = input("Ingresa tu movimiento: ")
 
-        if move.lower() == "salir":
+        if move.upper() == "FIN":
             print("Juego terminado.")
             break
 
-        start, end = parse_input(move)
+        start, end, castling = parse_input(move)
 
-        if start is None or end is None:
+        if castling:
+            if is_valid_castling(player, castling):
+                move_piece(None, None, castling)
+                player = "black" if player == "white" else "white"  # Cambiar turno
+            else:
+                print("Enroque no valido. Intenta de nuevo.")
+
+        elif start is None or end is None:
             print("Movimiento invalido. Intenta de nuevo.")
             continue
 
-        if is_valid_move(start, end, player):
+        elif is_valid_move(start, end, player):
             move_piece(start, end)
             player = "black" if player == "white" else "white"  # Cambiar turno
         else:
