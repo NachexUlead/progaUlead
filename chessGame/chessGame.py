@@ -1,5 +1,4 @@
-# Inicializar el tablero de ajedrez vacio
-board = [
+default_board = [
     ["r", "n", "b", "q", "k", "b", "n", "r"],
     ["p", "p", "p", "p", "p", "p", "p", "p"],
     [" ", " ", " ", " ", " ", " ", " ", " "],
@@ -10,7 +9,8 @@ board = [
     ["R", "N", "B", "Q", "K", "B", "N", "R"]
 ]
 
-# Mapeo de columnas de letras a indices
+board = [row[:] for row in default_board]
+
 column_map = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
 
 def print_board():
@@ -20,6 +20,50 @@ def print_board():
         print(8 - i, end=" ")
         print(" ".join(row))
     print()
+
+
+
+def customize_board():
+    """Permite al usuario personalizar el tablero."""
+    global board
+    print(
+        "Ingrese las piezas que desea colocar en el tablero en formato 'pieza columna fila'."
+    )
+    print(
+        "Por ejemplo: 'K e1' coloca un Rey blanco en e1. Ingrese 'FIN' cuando termine."
+    )
+    while True:
+        print_board()
+        move = input("Ingrese una pieza y su posición (FIN para terminar): ")
+        if move.upper() == "FIN":
+            break
+        try:
+            piece, position = move.split()
+            row = 8 - int(position[1])
+            col = column_map[position[0].lower()]
+            board[row][col] = piece
+        except (ValueError, IndexError, KeyError):
+            print("Entrada invalida. Intente de nuevo.")
+    print("Tablero personalizado configurado.")
+
+
+def select_board_setup():
+    """Permite al usuario seleccionar entre el tablero estandar o una posicion personalizada."""
+    global board
+    while True:
+        print("Selecciona una opcion para iniciar el juego:")
+        print("1. Tablero estandar")
+        print("2. Posicion 'ad hoc' personalizada")
+        option = input("Ingrese 1 o 2: ")
+        if option == "1":
+            board = [row[:] for row in default_board]
+            break
+        elif option == "2":
+            customize_board()
+            break
+        else:
+            print("Opcion no valida. Intente de nuevo.")
+
 
 def is_valid_move(start, end, player):
     """Verifica si un movimiento es valido"""
@@ -161,6 +205,7 @@ def parse_input(move):
 
 def main():
     """Funcion principal para ejecutar el juego."""
+    select_board_setup()
     player = "white"
     while True:
         print_board()
