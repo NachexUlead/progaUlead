@@ -1,8 +1,7 @@
 from piece import Piece
 
 class Knight(Piece):
-    def move(self, destination):
-        initialRow, initialCol = self.position
-        destRow, destCol = destination
-        dx, dy = abs(destRow - initialRow), abs(destCol - initialCol)
-        return (dx, dy) in [(1, 2), (2, 1)]
+    def move(self, destination, board):
+        startRow, startCol = self.position
+        endRow, endCol = destination
+        return (abs(startRow - endRow), abs(startCol - endCol)) in [(2, 1), (1, 2)]

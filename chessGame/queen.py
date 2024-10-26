@@ -1,9 +1,10 @@
 from piece import Piece
+from utils import isClearPath
 
 class Queen(Piece):
-    def move(self, destination):
-        initialRow, initialCol = self.position
-        destRow, destCol = destination
-        dx, dy = abs(destRow - initialRow), abs(destCol - initialCol)
-        
-        return dx == dy or initialRow == destRow or initialCol == destCol
+    def move(self, destination, board):
+        startRow, startCol = self.position
+        endRow, endCol = destination
+        if (startRow == endRow or startCol == endCol) or (abs(startRow - endRow) == abs(startCol - endCol)):
+            return isClearPath(self.position, destination, board)
+        return False

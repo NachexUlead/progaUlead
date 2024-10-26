@@ -55,17 +55,13 @@ def findPieceAtPosition(pieces, position):
     return None
 
 def movePiece(piece, destination, board):
-    if piece.move(destination):
+    if piece.move(destination, board): 
         startRow, startCol = piece.position
         endRow, endCol = destination
-        
         board[startRow][startCol] = " "
-        if isinstance(piece, Pawn):
-            board[endRow][endCol] = "P" if piece.color == "white" else "p"
-        else:
-            board[endRow][endCol] = piece.__class__.__name__[0].upper() if piece.color == "white" else piece.__class__.__name__[0].lower()
+        board[endRow][endCol] = piece.__class__.__name__[0].upper() if piece.color == "white" else piece.__class__.__name__[0].lower()
         
-        piece.position = destination  
+        piece.position = destination
         print(f"Move of {piece} to {destination} is valid.")
     else:
         print(f"Move of {piece} to {destination} is not valid.")
