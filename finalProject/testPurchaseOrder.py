@@ -3,6 +3,7 @@ from product import Product
 from purchaseOrder import PurchaseOrder
 from taxes import calculateTax, validateState
 
+
 class TestPurchaseOrder(unittest.TestCase):
     def setUp(self):
         self.product1 = Product("Product 1", "P1", 1500.0)
@@ -13,11 +14,11 @@ class TestPurchaseOrder(unittest.TestCase):
     def testStateValidation(self):
         self.assertTrue(validateState("CA"))
         self.assertFalse(validateState("ZZ"))
-    
+
     def testInvalidState(self):
         with self.assertRaises(ValueError):
             self.order.calculateFinalPrice("ZZ")
-    
+
     def testTaxCalculation(self):
 
         # State NH (0% tax)
@@ -36,5 +37,6 @@ class TestPurchaseOrder(unittest.TestCase):
         self.assertEqual(sum([product.getPrice() for product in self.products]), 1550.0)
         self.assertAlmostEqual(self.order.calculateFinalPrice("CA"), 1829.0)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
